@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _rigidbody;
     private PlayerControls _controls;
-    // Start is called before the first frame update
+    
     private void Awake()
     {
         _controls = new PlayerControls();
