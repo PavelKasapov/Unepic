@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,22 +9,36 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D _rigidbody;
     private PlayerControls _controls;
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         _controls = new PlayerControls();
-        _controls.CommonMovement.Jump.performed += Jump;
-        _controls.CommonMovement.HorisontalMovement.performed += (ctx => Move(ctx.ReadValue<float>()));
+    }
+
+    private void OnEnable()
+    {
+        _controls.Enable();
+    }
+    
+    private void OnDisable()
+    {
+        _controls.Disable();
+    }
+
+    private void FixedUpdate()
+    {
+        Jump(_controls.CommonMovement.Jump.ReadValue<float>());
+        Move(_controls.CommonMovement.HorisontalMovement.ReadValue<float>());
     }
 
     // Update is called once per frame
     void Move(float value)
     {
-        Debug.Log(value);
+        _rigidbody.velocity = new Vector2(value * 2, _rigidbody.velocity.y);
     }
 
-    public void Jump(InputAction.CallbackContext ctx)
+    void Jump(float value)
     {
-        Debug.Log(ctx);
-        _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 1f);
+        if (value > 0)
+            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, value * 5);
     }
 }
