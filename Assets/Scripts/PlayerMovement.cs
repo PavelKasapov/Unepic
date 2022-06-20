@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Timeline;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -30,6 +31,8 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Move(float value)
     {
+        var localScale = transform.localScale;
+        localScale = new Vector3(Mathf.Sign(value), localScale.y, localScale.z);
         _rigidbody.velocity = new Vector2(value * 2, _rigidbody.velocity.y);
     }
 
