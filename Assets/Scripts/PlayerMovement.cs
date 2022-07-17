@@ -4,6 +4,7 @@ using UnityEngine.Timeline;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _rigidbody;
+    [SerializeField] private float speed = 2; 
     
     private PlayerControls _controls;
     
@@ -31,9 +32,14 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Move(float value)
     {
-        var localScale = transform.localScale;
-        localScale = new Vector3(Mathf.Sign(value), localScale.y, localScale.z);
-        _rigidbody.velocity = new Vector2(value * 2, _rigidbody.velocity.y);
+        if (value != 0f)
+        {
+            var localScale = transform.localScale;
+            localScale = new Vector3(Mathf.Sign(value) * Mathf.Abs(localScale.x), localScale.y, localScale.z);
+            transform.localScale = localScale;
+        }
+
+        _rigidbody.velocity = new Vector2(value * speed, _rigidbody.velocity.y);
     }
 
     void Jump(float value)
