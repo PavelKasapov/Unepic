@@ -7,13 +7,13 @@ public class PlayerMovement : MonoBehaviour
     private const float GroundCheckLenght = 0.1f;
     
     [SerializeField] private new Rigidbody2D rigidbody;
-    [SerializeField] private LayerMask whatIsGround = 2; 
+    [SerializeField] private LayerMask whatIsGround; 
     [SerializeField] private Transform groundLevelPoint;
     [SerializeField] private float speed = 2; 
     
     private PlayerControls _controls;
     private int _faceDirection = 1;
-    private float _moveValue = 0f;
+    private float _moveValue;
     private Coroutine _moveCoroutine;
     private Coroutine _groundCheckCoroutine;
 
@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
         _controls.Disable();
     }
 
-    void Move(float value)
+    private void Move(float value)
     {
         if (value != 0f)
         {
@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
             _moveCoroutine ??= StartCoroutine(MoveRoutine());
         }
     }
-
+    
     IEnumerator MoveRoutine()
     {
         var moveValue = _moveValue;
@@ -75,7 +75,16 @@ public class PlayerMovement : MonoBehaviour
         _moveCoroutine = null;
     }
     
-    IEnumerator DelayedMoveRoutine()
+    private void Jump(float value)
+    {
+        if (IsGrounded())
+        {
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 4);
+            _groundCheckCoroutine ??= StartCoroutine(GroundCheckRoutine());
+        }
+    }
+
+    IEnumerator GroundCheckRoutine()
     {
         yield return new WaitForSeconds(0.1f);
         
@@ -88,16 +97,7 @@ public class PlayerMovement : MonoBehaviour
 
         _groundCheckCoroutine = null;
     }
-
-    void Jump(float value)
-    {
-        if (IsGrounded())
-        {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 4);
-            _groundCheckCoroutine ??= StartCoroutine(DelayedMoveRoutine());
-        }
-    }
-
+    
     private bool IsGrounded()
     {
         return Physics2D.Raycast(groundLevelPoint.position, Vector2.down, GroundCheckLenght, whatIsGround).collider != null;
