@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Timeline;
 
 public class PlayerMovement : MonoBehaviour
 {
     private const float GroundCheckLenght = 0.1f;
     
     [SerializeField] private new Rigidbody2D rigidbody;
-    [SerializeField] private new Collider2D collider;
     [SerializeField] private LayerMask whatIsGround = 2; 
     [SerializeField] private Transform groundLevelPoint;
     [SerializeField] private float speed = 2; 
@@ -38,15 +36,8 @@ public class PlayerMovement : MonoBehaviour
         _controls.Disable();
     }
 
-    /*private void FixedUpdate()
-    {
-        Jump(_controls.CommonMovement.Jump.ReadValue<float>());
-        Move(_controls.CommonMovement.HorisontalMovement.ReadValue<float>());
-    }*/
-
     void Move(float value)
     {
-        Debug.Log($"!! Move {value}");
         if (value != 0f)
         {
             if (Math.Sign(value) != _faceDirection)
@@ -76,7 +67,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 moveValue = _moveValue;
             }
-            Debug.Log($"!! {_moveValue} {_groundCheckCoroutine != null}");
             rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
             yield return new WaitForFixedUpdate();
         }
@@ -94,17 +84,16 @@ public class PlayerMovement : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        Move(_moveValue);
+        _moveCoroutine ??= StartCoroutine(MoveRoutine());
 
         _groundCheckCoroutine = null;
     }
 
     void Jump(float value)
     {
-        Debug.Log($"!! Jump {value}");
         if (IsGrounded())
         {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 3);
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 4);
             _groundCheckCoroutine ??= StartCoroutine(DelayedMoveRoutine());
         }
     }
