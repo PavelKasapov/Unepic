@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5406970637534165181}
   - component: {fileID: 5406970637534165180}
+  - component: {fileID: 2102082275604675540}
   - component: {fileID: 5406970637534165183}
   - component: {fileID: 5406970637534165182}
   - component: {fileID: 5406970637534165121}
@@ -89,6 +90,19 @@ MonoBehaviour:
     m_Bits: 128
   groundLevelPoint: {fileID: 3894332260886697908}
   speed: 5.2
+--- !u!114 &2102082275604675540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5406970637534165125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3379b6fadee2f444fa370f0a54865ed4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovementSystem: {fileID: 5406970637534165180}
 --- !u!212 &5406970637534165183
 SpriteRenderer:
   m_ObjectHideFlags: 0

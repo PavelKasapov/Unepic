@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerInputController : MonoBehaviour
+{
+    [SerializeField] private CharacterMovementSystem playerMovementSystem;
+    
+    private PlayerControls _controls;
+    
+    private void Awake()
+    {
+        _controls = new PlayerControls();
+        
+        _controls.CommonMovement.HorisontalMovement.performed += ctx => playerMovementSystem.Move(ctx.ReadValue<float>());
+        _controls.CommonMovement.HorisontalMovement.canceled += ctx => playerMovementSystem.Move(ctx.ReadValue<float>());
+        _controls.CommonMovement.Jump.performed += ctx => playerMovementSystem.Jump(ctx.ReadValue<float>());
+    }
+    
+    private void OnEnable()
+    {
+        _controls.Enable();
+    }
+    
+    private void OnDisable()
+    {
+        _controls.Disable();
+    }
+}

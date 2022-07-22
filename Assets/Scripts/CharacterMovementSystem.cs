@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class CharacterMovementSystem : MonoBehaviour
 {
     private const float GroundCheckLenght = 0.1f;
 
@@ -11,8 +11,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask whatIsGround; 
     [SerializeField] private Transform groundLevelPoint;
     [SerializeField] private float speed = 2; 
-    
-    private PlayerControls _controls;
     private Vector2 _boxCastSize;
     private int _faceDirection = 1;
     private float _moveValue;
@@ -22,23 +20,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        _controls = new PlayerControls();
         _boxCastSize = new Vector2(collider.size.x * 0.5f, GroundCheckLenght);
-        
-        _controls.CommonMovement.HorisontalMovement.performed += ctx => Move(ctx.ReadValue<float>());
-        _controls.CommonMovement.HorisontalMovement.canceled += ctx => Move(ctx.ReadValue<float>());
-        _controls.CommonMovement.Jump.performed += ctx => Jump(ctx.ReadValue<float>());
     }
 
     private void OnEnable()
     {
-        _controls.Enable();
         _groundCheckCoroutine ??= StartCoroutine(GroundCheckRoutine());
     }
     
     private void OnDisable()
     {
-        _controls.Disable();
         if (_groundCheckCoroutine != null)
         {
             StopCoroutine(_groundCheckCoroutine);
@@ -46,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Move(float value)
+    public void Move(float value)
     {
         if (value != 0f)
         {
@@ -62,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
         
         _moveValue = value;
         
-        if (IsGrounded())
+        if (_isGrounded)
         {
             _moveCoroutine ??= StartCoroutine(MoveRoutine());
         }
@@ -85,12 +76,11 @@ public class PlayerMovement : MonoBehaviour
         _moveCoroutine = null;
     }
     
-    private void Jump(float value)
+    public void Jump(float value)
     {
-        if (IsGrounded())
+        if (_isGrounded)
         {
             rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 5);
-            
         }
     }
 
@@ -98,14 +88,14 @@ public class PlayerMovement : MonoBehaviour
     {
         while (true)
         {
-            var value = IsGrounded();
-            Debug.Log($"!! IsGrounded {value}");
-            if (_isGrounded != value)
+            if (rigidbody.velocity != Vector2.zero)
             {
-                _isGrounded = value;
-                
-                if (value)
-                    _moveCoroutine ??= StartCoroutine(MoveRoutine());
+                _isGrounded = IsGrounded();
+            }
+            else
+            {
+                _isGrounded = true;
+                _moveCoroutine ??= StartCoroutine(MoveRoutine());
             }
             
             yield return new WaitForFixedUpdate();
@@ -114,6 +104,12 @@ public class PlayerMovement : MonoBehaviour
     
     private bool IsGrounded()
     {
+        Debug.Log($"!! IsGrounded Actual Check");
+        if (rigidbody.velocity.y != 0f)
+        {
+            return false;
+        }
+        Debug.Log($"!! IsGrounded Actual Raycast");
         return Physics2D.BoxCast(groundLevelPoint.position, _boxCastSize, 0, Vector2.down, GroundCheckLenght, whatIsGround).collider != null;
     }
 }
