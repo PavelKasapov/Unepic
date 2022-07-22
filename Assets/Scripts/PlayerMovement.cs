@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (IsGrounded())
         {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 4);
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 5);
             
         }
     }
@@ -99,6 +99,7 @@ public class PlayerMovement : MonoBehaviour
         while (true)
         {
             var value = IsGrounded();
+            Debug.Log($"!! IsGrounded {value}");
             if (_isGrounded != value)
             {
                 _isGrounded = value;

@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         var direction = Mathf.Sign(playerTransform.position.x - transform.position.x);
-        selfRb.velocity = new Vector2(direction * speed, 0);
+        selfRb.velocity = new Vector2(direction * speed, selfRb.velocity.y);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
