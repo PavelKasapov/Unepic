@@ -107,12 +107,11 @@ public class CharacterMovementSystem : MonoBehaviour
     
     private bool IsGrounded()
     {
-        Debug.Log($"!! IsGrounded Actual Check");
         if (rigidbody.velocity.y != 0f)
         {
             return false;
         }
-        Debug.Log($"!! IsGrounded Actual Raycast");
+        
         return Physics2D.BoxCast(groundLevelPoint.position, _boxCastSize, 0, Vector2.down, GroundCheckLenght, whatIsGround).collider != null;
     }
     

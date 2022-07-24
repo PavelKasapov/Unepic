@@ -1,24 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 public class Enemy : MonoBehaviour
 {
     [Inject(Id = "Player")] private Transform playerTransform;
     [SerializeField] private Rigidbody2D selfRb;
+    [SerializeField] private Slider hpBar;
     [SerializeField] private float speed;
-
-    [SerializeField] private int life = 1;
-
+    
+    [SerializeField] private int life;
     private int Life
     {
         get 
         { 
             return life; 
         }
-        set 
-        { 
+        set
+        {
+            hpBar.value = value;
             life = value;
             if (value <= 0)
                 Destroy(gameObject);
@@ -28,7 +30,8 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        
+        hpBar.maxValue = life;
+        Life = life;
     }
 
     void Update()
@@ -50,12 +53,12 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Attack")
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Weapon"))
         {
             Debug.Log("!!!!take shit");
 
             Life--;
-
+            
         }
     }
 }
