@@ -11,10 +11,13 @@ public class CharacterMovementSystem : MonoBehaviour
     [SerializeField] private LayerMask whatIsGround; 
     [SerializeField] private Transform groundLevelPoint;
     [SerializeField] private float speed = 2; 
+    [SerializeField] private Animator weaponAnimator;
+    
     private Vector2 _boxCastSize;
     private int _faceDirection = 1;
     private float _moveValue;
     private bool _isGrounded;
+    private bool _isAnimated;
     private Coroutine _moveCoroutine;
     private Coroutine _groundCheckCoroutine;
 
@@ -111,5 +114,11 @@ public class CharacterMovementSystem : MonoBehaviour
         }
         Debug.Log($"!! IsGrounded Actual Raycast");
         return Physics2D.BoxCast(groundLevelPoint.position, _boxCastSize, 0, Vector2.down, GroundCheckLenght, whatIsGround).collider != null;
+    }
+    
+    public void Attack()
+    {
+        if (!weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Swing")) 
+            weaponAnimator.SetTrigger("swing");
     }
 }

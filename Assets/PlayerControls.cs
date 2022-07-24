@@ -44,6 +44,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""bdfb1218-7655-460b-9228-8871c02cdac4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -101,6 +110,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""23ebe8d4-ced4-4b89-bd6f-4d612f768a4b"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Player"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -123,6 +143,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_CommonMovement = asset.FindActionMap("Common Movement", throwIfNotFound: true);
         m_CommonMovement_HorisontalMovement = m_CommonMovement.FindAction("Horisontal Movement", throwIfNotFound: true);
         m_CommonMovement_Jump = m_CommonMovement.FindAction("Jump", throwIfNotFound: true);
+        m_CommonMovement_Attack = m_CommonMovement.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -184,12 +205,14 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private ICommonMovementActions m_CommonMovementActionsCallbackInterface;
     private readonly InputAction m_CommonMovement_HorisontalMovement;
     private readonly InputAction m_CommonMovement_Jump;
+    private readonly InputAction m_CommonMovement_Attack;
     public struct CommonMovementActions
     {
         private @PlayerControls m_Wrapper;
         public CommonMovementActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @HorisontalMovement => m_Wrapper.m_CommonMovement_HorisontalMovement;
         public InputAction @Jump => m_Wrapper.m_CommonMovement_Jump;
+        public InputAction @Attack => m_Wrapper.m_CommonMovement_Attack;
         public InputActionMap Get() { return m_Wrapper.m_CommonMovement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -205,6 +228,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnJump;
+                @Attack.started -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_CommonMovementActionsCallbackInterface = instance;
             if (instance != null)
@@ -215,6 +241,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -232,5 +261,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     {
         void OnHorisontalMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
