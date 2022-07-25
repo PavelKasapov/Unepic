@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5406970637534165181}
   - component: {fileID: 5406970637534165180}
+  - component: {fileID: 6056046777629279934}
   - component: {fileID: 2102082275604675540}
   - component: {fileID: 5406970637534165183}
   - component: {fileID: 5406970637534165182}
@@ -91,6 +92,21 @@ MonoBehaviour:
   groundLevelPoint: {fileID: 3894332260886697908}
   speed: 5.2
   weaponAnimator: {fileID: 1881789808687837660}
+--- !u!114 &6056046777629279934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5406970637534165125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54cd0d6ff245490469c0637ae514847f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  life: 0
+  Life:
+    value: 0
 --- !u!114 &2102082275604675540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,6 +233,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _components:
   - {fileID: 5406970637534165181}
+  - {fileID: 6056046777629279934}
+  - {fileID: 5406970637534165180}
   _identifier: Player
   _useSceneContext: 1
   _context: {fileID: 0}
@@ -339,7 +357,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.07580304, y: 0.6956395}
+  m_Offset: {x: 0.07580304, y: 0.514606}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -350,5 +368,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5608176, y: 0.20872116}
+  m_Size: {x: 0.5608176, y: 0.5707882}
   m_EdgeRadius: 0
