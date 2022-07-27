@@ -65,18 +65,58 @@ public class CharacterMovementSystem : MonoBehaviour
     private IEnumerator MoveRoutine()
     {
         var moveValue = _moveValue;
+        
+        while (_moveValue != 0f || rigidbody.velocity.x != 0)
+        {
+            if (_moveValue != 0f || !_isGrounded)
+            {
+                if ( moveValue != _moveValue && _isGrounded)
+                {
+                    moveValue = _moveValue;
+                }
+
+                if (moveValue > 0 && rigidbody.velocity.x < speed 
+                    || moveValue < 0 && rigidbody.velocity.x > -speed)
+                {
+                    Debug.Log($"!! Increasing");
+                    rigidbody.AddRelativeForce( new Vector2(moveValue * 10, 0));
+                }
+            
+                //rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
+                
+            }
+            else if (Math.Abs(rigidbody.velocity.x) > 0.1f)
+            {
+                Debug.Log($"!! Slowing down");
+                rigidbody.AddRelativeForce( new Vector2(-Math.Sign(rigidbody.velocity.x) * 5, 0));
+            }
+            yield return new WaitForFixedUpdate();
+        }
+        
+        
+        rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+        _moveCoroutine = null;
+        
+        /*var moveValue = _moveValue;
         while (_moveValue != 0f || !_isGrounded)
         {
             if ( moveValue != _moveValue && _isGrounded)
             {
                 moveValue = _moveValue;
             }
-            rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
+
+            if (moveValue > 0 && rigidbody.velocity.x < speed 
+                || moveValue < 0 && rigidbody.velocity.x > -speed)
+            {
+                rigidbody.AddRelativeForce( new Vector2(moveValue * 10, 0));
+            }
+            
+            //rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
             yield return new WaitForFixedUpdate();
         }
         
-        rigidbody.velocity = new Vector2(_moveValue, rigidbody.velocity.y);
-        _moveCoroutine = null;
+        rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+        _moveCoroutine = null;*/
     }
     
     public void Jump(float value)
