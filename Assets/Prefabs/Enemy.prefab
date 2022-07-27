@@ -188,6 +188,7 @@ MonoBehaviour:
   groundLevelPoint: {fileID: 6579847593551550658}
   speed: 1.5
   weaponAnimator: {fileID: 0}
+  FireballPrefab: {fileID: 0}
 --- !u!114 &5045322455208456839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,7 +204,7 @@ MonoBehaviour:
   characterData: {fileID: 7978332638429822462}
   damageSources:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1032
 --- !u!114 &5432908943846718703
 MonoBehaviour:
   m_ObjectHideFlags: 0

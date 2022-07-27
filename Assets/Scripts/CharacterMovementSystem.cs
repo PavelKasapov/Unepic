@@ -12,7 +12,8 @@ public class CharacterMovementSystem : MonoBehaviour
     [SerializeField] private Transform groundLevelPoint;
     [SerializeField] private float speed = 2; 
     [SerializeField] private Animator weaponAnimator;
-    
+    [SerializeField] private GameObject FireballPrefab;
+
     private Vector2 _boxCastSize;
     private int _faceDirection = 1;
     private float _moveValue;
@@ -38,6 +39,11 @@ public class CharacterMovementSystem : MonoBehaviour
             StopCoroutine(_groundCheckCoroutine);
             _groundCheckCoroutine = null;
         }
+    }
+
+    public void Shoot ()
+    {
+        Instantiate(FireballPrefab, transform.position, Quaternion.identity).GetComponent<Fireball>().Launch(_faceDirection);
     }
 
     public void Move(float value)

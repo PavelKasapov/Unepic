@@ -92,6 +92,7 @@ MonoBehaviour:
   groundLevelPoint: {fileID: 3894332260886697908}
   speed: 5.2
   weaponAnimator: {fileID: 1881789808687837660}
+  FireballPrefab: {fileID: 5598997823482677581, guid: 37a2cb84a28cf2646a11d59850eb2cb8, type: 3}
 --- !u!114 &6056046777629279934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,7 +105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54cd0d6ff245490469c0637ae514847f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 0
   Life:
     value: 0
 --- !u!114 &2102082275604675540
