@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Zenject;
 
 public class CharacterMovementSystem : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class CharacterMovementSystem : MonoBehaviour
     [SerializeField] private Transform groundLevelPoint;
     [SerializeField] private float speed = 2; 
     [SerializeField] private Animator weaponAnimator;
+    [SerializeField] private GameObject FireballPrefab;
+
+    [Inject] private RangedAttackManager _rangedAttackManager;
     
     private Vector2 _boxCastSize;
     private int _faceDirection = 1;
@@ -40,6 +44,12 @@ public class CharacterMovementSystem : MonoBehaviour
         }
     }
 
+    public void Shoot ()
+    {
+        _rangedAttackManager.Launch(RangedAttackType.Fireball, OriginType.Player, transform.position, new Vector2(_faceDirection, 0));
+        //Instantiate(FireballPrefab, transform.position, Quaternion.identity).GetComponent<Fireball>().Launch(new Vector2(_faceDirection, 0));
+    }
+
     public void Move(float value)
     {
         if (value != 0f)
@@ -55,41 +65,28 @@ public class CharacterMovementSystem : MonoBehaviour
         }
         
         _moveValue = value;
-        
-        if (_isGrounded)
-        {
-            _moveCoroutine ??= StartCoroutine(MoveRoutine());
-        }
+        _moveCoroutine ??= StartCoroutine(MoveRoutine());
     }
     
     private IEnumerator MoveRoutine()
     {
         var moveValue = _moveValue;
         
-        while (_moveValue != 0f || rigidbody.velocity.x != 0)
+        while (_moveValue != 0f || Math.Abs(rigidbody.velocity.x) > 0.5f)
         {
-            if (_moveValue != 0f || !_isGrounded)
+            Debug.Log($"!! {_moveValue} {rigidbody.velocity.x }");
+            if (_moveValue > 0 && rigidbody.velocity.x < speed 
+                || _moveValue < 0 && rigidbody.velocity.x > -speed)
             {
-                if ( moveValue != _moveValue && _isGrounded)
-                {
-                    moveValue = _moveValue;
-                }
-
-                if (moveValue > 0 && rigidbody.velocity.x < speed 
-                    || moveValue < 0 && rigidbody.velocity.x > -speed)
-                {
-                    Debug.Log($"!! Increasing");
-                    rigidbody.AddRelativeForce( new Vector2(moveValue * 10, 0));
-                }
-            
-                //rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
-                
+                Debug.Log($"!! Increasing");
+                rigidbody.AddRelativeForce( new Vector2(_moveValue * 20, 0));
             }
-            else if (Math.Abs(rigidbody.velocity.x) > 0.1f)
+            else
             {
                 Debug.Log($"!! Slowing down");
-                rigidbody.AddRelativeForce( new Vector2(-Math.Sign(rigidbody.velocity.x) * 5, 0));
+                rigidbody.AddRelativeForce( new Vector2(-Math.Sign(rigidbody.velocity.x) * 10, 0));
             }
+            
             yield return new WaitForFixedUpdate();
         }
         
@@ -112,6 +109,11 @@ public class CharacterMovementSystem : MonoBehaviour
             }
             
             //rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
+=======
+        while (_moveValue != 0f || !_isGrounded)
+        {
+            rigidbody.velocity = new Vector2(_moveValue * speed, rigidbody.velocity.y);
+>>>>>>> ranged_attack_rework
             yield return new WaitForFixedUpdate();
         }
         
@@ -123,7 +125,7 @@ public class CharacterMovementSystem : MonoBehaviour
     {
         if (_isGrounded)
         {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 5);
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 8);
         }
     }
 

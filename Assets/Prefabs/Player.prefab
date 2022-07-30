@@ -92,6 +92,7 @@ MonoBehaviour:
   groundLevelPoint: {fileID: 3894332260886697908}
   speed: 5.2
   weaponAnimator: {fileID: 1881789808687837660}
+  FireballPrefab: {fileID: 5598997823482677581, guid: 37a2cb84a28cf2646a11d59850eb2cb8, type: 3}
 --- !u!114 &6056046777629279934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,7 +105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54cd0d6ff245490469c0637ae514847f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 0
   Life:
     value: 0
 --- !u!114 &2102082275604675540
@@ -183,11 +183,11 @@ Rigidbody2D:
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
+  m_UseAutoMass: 1
   m_Mass: 0.5
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 6200000, guid: e69bbae2f756aac44aa2bf23ef0a07f4, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1

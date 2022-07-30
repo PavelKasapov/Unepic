@@ -53,6 +53,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""e45dcec6-4bc2-41a4-9f9f-260563e0779e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -121,6 +130,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9a9db410-2a27-4092-8b56-aee014bbe5ba"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Player"",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -144,6 +164,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_CommonMovement_HorisontalMovement = m_CommonMovement.FindAction("Horisontal Movement", throwIfNotFound: true);
         m_CommonMovement_Jump = m_CommonMovement.FindAction("Jump", throwIfNotFound: true);
         m_CommonMovement_Attack = m_CommonMovement.FindAction("Attack", throwIfNotFound: true);
+        m_CommonMovement_Shoot = m_CommonMovement.FindAction("Shoot", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -206,6 +227,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_CommonMovement_HorisontalMovement;
     private readonly InputAction m_CommonMovement_Jump;
     private readonly InputAction m_CommonMovement_Attack;
+    private readonly InputAction m_CommonMovement_Shoot;
     public struct CommonMovementActions
     {
         private @PlayerControls m_Wrapper;
@@ -213,6 +235,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @HorisontalMovement => m_Wrapper.m_CommonMovement_HorisontalMovement;
         public InputAction @Jump => m_Wrapper.m_CommonMovement_Jump;
         public InputAction @Attack => m_Wrapper.m_CommonMovement_Attack;
+        public InputAction @Shoot => m_Wrapper.m_CommonMovement_Shoot;
         public InputActionMap Get() { return m_Wrapper.m_CommonMovement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -231,6 +254,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Attack.started -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnAttack;
+                @Shoot.started -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnShoot;
+                @Shoot.performed -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnShoot;
+                @Shoot.canceled -= m_Wrapper.m_CommonMovementActionsCallbackInterface.OnShoot;
             }
             m_Wrapper.m_CommonMovementActionsCallbackInterface = instance;
             if (instance != null)
@@ -244,6 +270,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
+                @Shoot.started += instance.OnShoot;
+                @Shoot.performed += instance.OnShoot;
+                @Shoot.canceled += instance.OnShoot;
             }
         }
     }
@@ -262,5 +291,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnHorisontalMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
+        void OnShoot(InputAction.CallbackContext context);
     }
 }
