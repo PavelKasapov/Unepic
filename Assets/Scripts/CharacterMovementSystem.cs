@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Zenject;
 
 public class CharacterMovementSystem : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class CharacterMovementSystem : MonoBehaviour
     [SerializeField] private Animator weaponAnimator;
     [SerializeField] private GameObject FireballPrefab;
 
+    [Inject] private RangedAttackManager _rangedAttackManager;
+    
     private Vector2 _boxCastSize;
     private int _faceDirection = 1;
     private float _moveValue;
@@ -43,7 +46,8 @@ public class CharacterMovementSystem : MonoBehaviour
 
     public void Shoot ()
     {
-        Instantiate(FireballPrefab, transform.position, Quaternion.identity).GetComponent<Fireball>().Launch(_faceDirection);
+        _rangedAttackManager.Launch(RangedAttackType.Fireball, OriginType.Player, transform.position, new Vector2(_faceDirection, 0));
+        //Instantiate(FireballPrefab, transform.position, Quaternion.identity).GetComponent<Fireball>().Launch(new Vector2(_faceDirection, 0));
     }
 
     public void Move(float value)
