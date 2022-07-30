@@ -61,23 +61,14 @@ public class CharacterMovementSystem : MonoBehaviour
         }
         
         _moveValue = value;
-        
-        if (_isGrounded)
-        {
-            _moveCoroutine ??= StartCoroutine(MoveRoutine());
-        }
+        _moveCoroutine ??= StartCoroutine(MoveRoutine());
     }
     
     private IEnumerator MoveRoutine()
     {
-        var moveValue = _moveValue;
         while (_moveValue != 0f || !_isGrounded)
         {
-            if ( moveValue != _moveValue && _isGrounded)
-            {
-                moveValue = _moveValue;
-            }
-            rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
+            rigidbody.velocity = new Vector2(_moveValue * speed, rigidbody.velocity.y);
             yield return new WaitForFixedUpdate();
         }
         

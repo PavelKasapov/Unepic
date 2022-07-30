@@ -10,8 +10,6 @@ public class DamageTaker : MonoBehaviour
     {
         if (damageSources == (damageSources | (1 << collision.gameObject.layer)))
         {
-            Debug.Log("!!!!take shit");
-
             characterData.Life.Value--;
 
             if (characterData.Life.Value <= 0)

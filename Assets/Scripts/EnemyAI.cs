@@ -18,7 +18,7 @@ public class EnemyAI : MonoBehaviour
             playerMovementSystem.Move(playerDirection);
             moveDirection = playerDirection;
         }
-        Debug.Log($"_rigidbody.velocity.x {_rigidbody.velocity.x} / _playerTransform.position.y > transform.position.y {_playerTransform.position.y > transform.position.y}");
+        
         if (_rigidbody.velocity.x == 0f && _playerTransform.position.y > transform.position.y)
         {
             playerMovementSystem.Move(playerDirection);

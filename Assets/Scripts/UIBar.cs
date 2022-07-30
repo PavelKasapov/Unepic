@@ -7,13 +7,11 @@ public class UIBar : MonoBehaviour
 
     protected void ChangeValue(int value)
     {
-        Debug.Log($"!! ChangeValue {value}");
         bar.value = value;
     }
 
     protected void ChangeMaxValue(int value)
     {
-        Debug.Log($"!! ChangeMaxValue {value}");
         bar.maxValue = value;
     }
 }
