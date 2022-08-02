@@ -14,7 +14,7 @@ public class PlayerInputController : MonoBehaviour
         _controls.CommonMovement.HorisontalMovement.canceled += ctx => playerMovementSystem.Move(ctx.ReadValue<float>());
         _controls.CommonMovement.Jump.performed += ctx => playerMovementSystem.Jump(ctx.ReadValue<float>());
         _controls.CommonMovement.Attack.performed += ctx => playerMovementSystem.Attack();
-        _controls.CommonMovement.Shoot.performed += ctx => playerMovementSystem.Shoot();
+        _controls.CommonMovement.Shoot.performed += ctx => playerMovementSystem.ShootAnimation();
     }
     
     private void OnEnable()

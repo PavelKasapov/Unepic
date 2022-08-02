@@ -44,6 +44,12 @@ public class CharacterMovementSystem : MonoBehaviour
         }
     }
 
+    public void ShootAnimation ()
+    {
+        if (!weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Spellcast")) 
+            weaponAnimator.SetTrigger("spellcast");
+    }
+    
     public void Shoot ()
     {
         _rangedAttackManager.Launch(RangedAttackType.Fireball, OriginType.Player, transform.position, new Vector2(_faceDirection, 0));
