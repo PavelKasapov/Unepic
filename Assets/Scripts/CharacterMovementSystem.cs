@@ -131,7 +131,7 @@ public class CharacterMovementSystem : MonoBehaviour
     {
         if (_isGrounded)
         {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 8);
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 12);
         }
     }
 
