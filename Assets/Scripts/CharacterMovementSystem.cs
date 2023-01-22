@@ -1,171 +1,161 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
 public class CharacterMovementSystem : MonoBehaviour
 {
-    private const float GroundCheckLenght = 0.1f;
-
     [SerializeField] private new Rigidbody2D rigidbody;
-    [SerializeField] private new BoxCollider2D collider;
-    [SerializeField] private LayerMask whatIsGround; 
-    [SerializeField] private Transform groundLevelPoint;
-    [SerializeField] private float speed = 2; 
-    [SerializeField] private Animator weaponAnimator;
-    [SerializeField] private GameObject FireballPrefab;
+    [SerializeField] private float speed = 2;
+    [SerializeField] private EnvironmentTouchChecker environmentTouchChecker;
+    [SerializeField] private KnightAnimatorAdapter animationAdapter;
 
     [Inject] private RangedAttackManager _rangedAttackManager;
     
-    private Vector2 _boxCastSize;
     private int _faceDirection = 1;
     private float _moveValue;
-    private bool _isGrounded;
     private bool _isAnimated;
     private Coroutine _moveCoroutine;
-    private Coroutine _groundCheckCoroutine;
+    private Coroutine _wallSlideCheckCoroutine;
+    private DateTime _comboExpireTime;
+    private bool _usedSlideJump;
+    private bool _isWallSliding;
+    private IDisposable afterWallJumpMovementSubscription;
 
-    private void Awake()
+    private int FaceDirection
     {
-        _boxCastSize = new Vector2(collider.size.x * 0.5f, GroundCheckLenght);
-    }
-
-    private void OnEnable()
-    {
-        _groundCheckCoroutine ??= StartCoroutine(GroundCheckRoutine());
-    }
-    
-    private void OnDisable()
-    {
-        if (_groundCheckCoroutine != null)
+        set
         {
-            StopCoroutine(_groundCheckCoroutine);
-            _groundCheckCoroutine = null;
+            
+            if (value != _faceDirection)
+            {
+                _faceDirection *= -1;
+                var thisTransform = transform;
+                var localScale = thisTransform.localScale;
+                localScale.x = _faceDirection;
+                thisTransform.localScale = localScale;
+            }
         }
     }
 
-    public void ShootAnimation ()
+    private void Awake()
     {
-        if (!weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Spellcast")) 
-            weaponAnimator.SetTrigger("spellcast");
+        environmentTouchChecker.TouchingWallsDirection.Subscribe(WallSlideCheck);
+        environmentTouchChecker.IsTouchingGround.Subscribe(_ => _usedSlideJump = false);
+    }
+
+    /*public void ShootAnimation ()
+    {
+        return;
+        if (!playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Spellcast")) 
+            playerAnimator.SetTrigger("spellcast");
     }
     
     public void Shoot ()
     {
         _rangedAttackManager.Launch(RangedAttackType.Fireball, OriginType.Player, transform.position, new Vector2(_faceDirection, 0));
-        //Instantiate(FireballPrefab, transform.position, Quaternion.identity).GetComponent<Fireball>().Launch(new Vector2(_faceDirection, 0));
-    }
+    }*/
 
     public void Move(float value)
     {
-        if (value != 0f)
+        if (value != 0f && !_usedSlideJump)
         {
-            if (Math.Sign(value) != _faceDirection)
-            {
-                _faceDirection *= -1;
-                var thisTransform = transform;
-                var localScale = thisTransform.localScale;
-                localScale.x *= -1;
-                thisTransform.localScale = localScale;
-            }
+            FaceDirection = Math.Sign(value);
         }
         
         _moveValue = value;
+        animationAdapter.SetMovingState(value);
         _moveCoroutine ??= StartCoroutine(MoveRoutine());
     }
-    
+
     private IEnumerator MoveRoutine()
     {
-        var moveValue = _moveValue;
-        
         while (_moveValue != 0f || Math.Abs(rigidbody.velocity.x) > 0.5f)
         {
-            Debug.Log($"!! {_moveValue} {rigidbody.velocity.x }");
-            if (_moveValue > 0 && rigidbody.velocity.x < speed 
-                || _moveValue < 0 && rigidbody.velocity.x > -speed)
+            if (!_usedSlideJump && (_moveValue > 0 && rigidbody.velocity.x < speed 
+                               || _moveValue < 0 && rigidbody.velocity.x > -speed))
             {
-                Debug.Log($"!! Increasing");
-                rigidbody.AddRelativeForce( new Vector2(_moveValue * 20, 0));
+                rigidbody.velocity += new Vector2(_moveValue * 1, 0);
             }
-            else
+            else if (environmentTouchChecker.IsTouchingGround.Value)
             {
-                Debug.Log($"!! Slowing down");
-                rigidbody.AddRelativeForce( new Vector2(-Math.Sign(rigidbody.velocity.x) * 10, 0));
+                rigidbody.velocity -= new Vector2(Math.Sign(rigidbody.velocity.x) * 0.4f, 0);
             }
-            
             yield return new WaitForFixedUpdate();
         }
-        
         
         rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
         _moveCoroutine = null;
-        
-        /*var moveValue = _moveValue;
-        while (_moveValue != 0f || !_isGrounded)
-        {
-            if ( moveValue != _moveValue && _isGrounded)
-            {
-                moveValue = _moveValue;
-            }
-
-            if (moveValue > 0 && rigidbody.velocity.x < speed 
-                || moveValue < 0 && rigidbody.velocity.x > -speed)
-            {
-                rigidbody.AddRelativeForce( new Vector2(moveValue * 10, 0));
-            }
-            
-            //rigidbody.velocity = new Vector2(moveValue * speed, rigidbody.velocity.y);
-=======
-        while (_moveValue != 0f || !_isGrounded)
-        {
-            rigidbody.velocity = new Vector2(_moveValue * speed, rigidbody.velocity.y);
->>>>>>> ranged_attack_rework
-            yield return new WaitForFixedUpdate();
-        }
-        
-        rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-        _moveCoroutine = null;*/
     }
     
     public void Jump(float value)
     {
-        if (_isGrounded)
+        if (environmentTouchChecker.IsTouchingGround.Value)
         {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 12);
+            animationAdapter.TriggerJumpingState();
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, value * 14);
+        }
+        else if (_isWallSliding 
+                 && environmentTouchChecker.TouchingWallsDirection.Value == Math.Sign(_moveValue) 
+                 && !_usedSlideJump)
+        {
+            animationAdapter.TriggerJumpingState();
+            rigidbody.velocity = new Vector2(-_moveValue * 8, value * 16);
+            
+            FaceDirection = -Math.Sign(_moveValue);
+            afterWallJumpMovementSubscription = environmentTouchChecker.IsTouchingGround.Where(val => val).Subscribe(_ =>
+            {
+                Move(_moveValue);
+                afterWallJumpMovementSubscription.Dispose();
+            });
+            _usedSlideJump = true;
         }
     }
 
-    private IEnumerator GroundCheckRoutine()
+    private void WallSlideCheck(int touchingWallsDirection)
+    {
+        if (touchingWallsDirection != 0)
+        {
+            _wallSlideCheckCoroutine ??= StartCoroutine(WallSlideCheckRoutine(touchingWallsDirection));
+        }
+        else
+        {
+            if (_wallSlideCheckCoroutine != null)
+            {
+                StopCoroutine(_wallSlideCheckCoroutine);
+                _wallSlideCheckCoroutine = null;
+                
+                animationAdapter.SetWallSlideState(false);
+                rigidbody.drag =  1f;
+            }
+        }
+    }
+
+    private IEnumerator WallSlideCheckRoutine(int touchingWallsDirection)
     {
         while (true)
         {
-            if (rigidbody.velocity != Vector2.zero)
+            var isWallSliding = _moveValue != 0 
+                                && !environmentTouchChecker.IsTouchingGround.Value
+                                && touchingWallsDirection == Math.Sign(_moveValue)
+                                && rigidbody.velocity.y < 0;
+
+            if (_isWallSliding != isWallSliding)
             {
-                _isGrounded = IsGrounded();
+                animationAdapter.SetWallSlideState(isWallSliding);
+                rigidbody.drag = isWallSliding ? 10f : 1f;
+                _isWallSliding = isWallSliding;
             }
-            else
-            {
-                _isGrounded = true;
-                _moveCoroutine ??= StartCoroutine(MoveRoutine());
-            }
-            
+
             yield return new WaitForFixedUpdate();
         }
     }
-    
-    private bool IsGrounded()
-    {
-        if (rigidbody.velocity.y != 0f)
-        {
-            return false;
-        }
-        
-        return Physics2D.BoxCast(groundLevelPoint.position, _boxCastSize, 0, Vector2.down, GroundCheckLenght, whatIsGround).collider != null;
-    }
-    
+
     public void Attack()
     {
-        if (!weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Swing")) 
-            weaponAnimator.SetTrigger("swing");
+        animationAdapter.TriggerAttackState();
     }
 }

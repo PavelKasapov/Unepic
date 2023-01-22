@@ -4,8 +4,7 @@
 PhysicsMaterial2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Player
-  friction: 0.01
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Walls_noFriction
+  friction: 0
   bounciness: 0
