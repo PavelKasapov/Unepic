@@ -18,15 +18,29 @@ public class KnightAnimatorAdapter : MonoBehaviour, IAnimationAdapter
 	private static readonly int VerticalSpeed = Animator.StringToHash("AirSpeedY");
 	private static readonly int Jump = Animator.StringToHash("Jump");
 	private static readonly int Combo = Animator.StringToHash("Combo");
-	
+	private static readonly int ComboCounter = Animator.StringToHash("ComboCounter");
+	private static readonly int Attack = Animator.StringToHash("Attack");
+	private static readonly int InterruptionForAttack = Animator.StringToHash("InterruptionForAttack");
 	private static TimeSpan OneSecond = TimeSpan.FromSeconds(1);
-	private int currentAttackCounter = 1;
+	
 	private Coroutine _velocityApplyCoroutine;
 	private Coroutine _attackComboCoroutine;
 	private DateTime _comboExpireTime;
 	private int _moveValueSign;
+	private int _currentAttackCounter = 0;
 	
-
+	private int CurrentAttackCounter
+	{
+		get => _currentAttackCounter;
+		set
+		{
+			if (_currentAttackCounter != value)
+			{
+				_currentAttackCounter = value;
+				playerAnimator.SetInteger(ComboCounter, value);
+			}
+		}
+	}
 
 	private void Awake()
 	{
@@ -84,40 +98,33 @@ public class KnightAnimatorAdapter : MonoBehaviour, IAnimationAdapter
 			return;
 		};*/
 		_comboExpireTime = DateTime.Now.Add(OneSecond);
-		playerAnimator.SetTrigger("Attack");
-		//playerAnimator.SetTrigger("Attack" + currentAttackCounter);
+		playerAnimator.SetTrigger(Attack);
+		playerAnimator.SetTrigger(InterruptionForAttack);
 		
-		if (currentAttackCounter == 1 && _attackComboCoroutine == null)
+		if (CurrentAttackCounter == 1 && _attackComboCoroutine == null)
 		{
 			_attackComboCoroutine = StartCoroutine(AttackComboTimer());
 			
 		}
 
-		currentAttackCounter++;
+		CurrentAttackCounter++;
 
-		if (currentAttackCounter > 3)
+		if (CurrentAttackCounter > 3)
 		{
-			/*if (_attackComboCoroutine != null)
-			{
-				StopCoroutine(_attackComboCoroutine);
-			}
-            
-			_attackComboCoroutine = null;*/
-			currentAttackCounter = 1;
+			CurrentAttackCounter = 1;
 		}
 	}
 	
 	private IEnumerator AttackComboTimer()
 	{
 		yield return new WaitForFixedUpdate();
-		playerAnimator.SetBool(Combo, true);
+		
 		while (DateTime.Now < _comboExpireTime)
 		{
 			yield return new WaitForFixedUpdate();
 		}
 		
-		playerAnimator.SetBool(Combo, false);
-		currentAttackCounter = 1;
+		CurrentAttackCounter = 0;
 		_attackComboCoroutine = null;
 	}
 	

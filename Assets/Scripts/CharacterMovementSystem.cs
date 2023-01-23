@@ -29,7 +29,6 @@ public class CharacterMovementSystem : MonoBehaviour
     {
         set
         {
-            
             if (value != _faceDirection)
             {
                 _faceDirection *= -1;
@@ -80,10 +79,10 @@ public class CharacterMovementSystem : MonoBehaviour
             {
                 rigidbody.velocity += new Vector2(_moveValue * 1, 0);
             }
-            else if (environmentTouchChecker.IsTouchingGround.Value)
+            /*else if (environmentTouchChecker.IsTouchingGround.Value)
             {
                 rigidbody.velocity -= new Vector2(Math.Sign(rigidbody.velocity.x) * 0.4f, 0);
-            }
+            }*/
             yield return new WaitForFixedUpdate();
         }
         
@@ -146,7 +145,7 @@ public class CharacterMovementSystem : MonoBehaviour
             if (_isWallSliding != isWallSliding)
             {
                 animationAdapter.SetWallSlideState(isWallSliding);
-                rigidbody.drag = isWallSliding ? 10f : 1f;
+                //rigidbody.drag = isWallSliding ? 10f : 1f;
                 _isWallSliding = isWallSliding;
             }
 
@@ -156,6 +155,12 @@ public class CharacterMovementSystem : MonoBehaviour
 
     public void Attack()
     {
-        animationAdapter.TriggerAttackState();
+        if (!_isWallSliding)
+            animationAdapter.TriggerAttackState();
+
+        if (environmentTouchChecker.IsTouchingGround.Value)
+        {
+            rigidbody.velocity = new Vector2(6 * _faceDirection, 0);
+        }
     }
 }
