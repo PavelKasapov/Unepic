@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using JetBrains.Annotations;
 using UniRx;
 using UnityEngine;
 
@@ -28,7 +29,19 @@ public class KnightAnimatorAdapter : MonoBehaviour, IAnimationAdapter
 	private DateTime _comboExpireTime;
 	private int _moveValueSign;
 	private int _currentAttackCounter = 0;
+	private bool _isAttackAnimation;
 	
+	private bool IsAttackAnimation
+	{
+		get => _isAttackAnimation;
+		set
+		{
+			Debug.Log($"!! _isAttackAnimation {_isAttackAnimation} => {value}");
+			_isAttackAnimation = value;
+			Debug.Log($"!! {_isAttackAnimation}");
+		}
+	}
+
 	private int CurrentAttackCounter
 	{
 		get => _currentAttackCounter;
@@ -45,8 +58,8 @@ public class KnightAnimatorAdapter : MonoBehaviour, IAnimationAdapter
 	private void Awake()
 	{
 		environmentTouchChecker.IsTouchingGround.Subscribe(value => playerAnimator.SetBool(IsGrounded, value));
-		environmentTouchChecker.TouchingWallsDirection.Where(value => environmentTouchChecker.IsTouchingGround.Value && value == Math.Sign(rigidbody.velocity.x))
-			.Subscribe(value => SetMovingState(0));
+		/*environmentTouchChecker.TouchingWallsDirection.Where(value => environmentTouchChecker.IsTouchingGround.Value && value == Math.Sign(rigidbody.velocity.x))
+			.Subscribe(value => SetMovingState(0));*/
 	}
 	
 	private void OnEnable()
@@ -78,7 +91,7 @@ public class KnightAnimatorAdapter : MonoBehaviour, IAnimationAdapter
 	public void SetMovingState(float moveValue)
 	{
 		_moveValueSign = moveValue != 0 ? Math.Sign(moveValue) : 0;
-		playerAnimator.SetBool(IsMoving, moveValue != 0 && environmentTouchChecker.TouchingWallsDirection.Value != _moveValueSign);
+		playerAnimator.SetBool(IsMoving, moveValue != 0 /*&& environmentTouchChecker.TouchingWallsDirection.Value != _moveValueSign*/);
 	}
 	
 	public void TriggerJumpingState()
@@ -91,17 +104,25 @@ public class KnightAnimatorAdapter : MonoBehaviour, IAnimationAdapter
 		playerAnimator.SetBool(CanWallSlide, isWallSliding);
 	}
 
-	public void TriggerAttackState()
+	public void TriggerAttackState(int faceDirection)
 	{
-		/*if (playerAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
+		if (IsAttackAnimation)
 		{
 			return;
-		};*/
+		}
+		IsAttackAnimation = true;
+		
+		// Temporary. Not supposed to be here. Will proceed in CharacterMovementSystem soon.
+		if (environmentTouchChecker.IsTouchingGround.Value)
+		{
+			rigidbody.velocity = new Vector2(5 * faceDirection, 0);
+		}//
+		
 		_comboExpireTime = DateTime.Now.Add(OneSecond);
 		playerAnimator.SetTrigger(Attack);
 		playerAnimator.SetTrigger(InterruptionForAttack);
 		
-		if (CurrentAttackCounter == 1 && _attackComboCoroutine == null)
+		if (CurrentAttackCounter == 0 && _attackComboCoroutine == null)
 		{
 			_attackComboCoroutine = StartCoroutine(AttackComboTimer());
 			
@@ -144,5 +165,11 @@ public class KnightAnimatorAdapter : MonoBehaviour, IAnimationAdapter
 			// Turn arrow in correct direction
 			dust.transform.localScale = new Vector3(_moveValueSign, 1, 1);
 		}
+	}
+
+	[UsedImplicitly(ImplicitUseKindFlags.Access)]
+	private void OnAttackEnd()
+	{
+		IsAttackAnimation = false;
 	}
 }

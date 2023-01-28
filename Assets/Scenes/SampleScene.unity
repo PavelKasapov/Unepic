@@ -419,7 +419,7 @@ MonoBehaviour:
   environmentTouchChecker: {fileID: 5406970638268630176}
   playerAnimator: {fileID: 895528658}
   rigidbody: {fileID: 5406970638268630178}
-  slideDust: {fileID: 0}
+  slideDust: {fileID: 1038168246061390451, guid: 8b8c8cc6774fb074cb9139cc631b108e, type: 3}
 --- !u!1 &908133010
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,6 +1175,7 @@ GameObject:
   - component: {fileID: 1473771321}
   - component: {fileID: 1473771323}
   - component: {fileID: 1473771322}
+  - component: {fileID: 1473771324}
   m_Layer: 7
   m_Name: Tilemap
   m_TagString: Untagged
@@ -3415,7 +3416,7 @@ CompositeCollider2D:
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_UsedByEffector: 0
+  m_UsedByEffector: 1
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_GeometryType: 0
@@ -3581,6 +3582,25 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!251 &1473771324
+PlatformEffector2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1473771317}
+  m_Enabled: 1
+  m_UseColliderMask: 1
+  m_ColliderMask:
+    serializedVersion: 2
+    m_Bits: 768
+  m_RotationalOffset: 0
+  m_UseOneWay: 0
+  m_UseOneWayGrouping: 0
+  m_SurfaceArc: 180
+  m_UseSideFriction: 0
+  m_UseSideBounce: 0
+  m_SideArc: 1
 --- !u!1 &1516551677
 GameObject:
   m_ObjectHideFlags: 0
@@ -4240,7 +4260,7 @@ PrefabInstance:
     - target: {fileID: 5406970637534165180, guid: 3ea772defc2a35e40991970e51f613c6, type: 3}
       propertyPath: animationAdapter
       value: 
-      objectReference: {fileID: 5406970638268630175}
+      objectReference: {fileID: 895528662}
     - target: {fileID: 5406970637534165180, guid: 3ea772defc2a35e40991970e51f613c6, type: 3}
       propertyPath: environmentTouchChecker
       value: 
@@ -4301,19 +4321,9 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1485521098457903733, guid: 3ea772defc2a35e40991970e51f613c6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3ea772defc2a35e40991970e51f613c6, type: 3}
---- !u!114 &5406970638268630175 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1485521098457903733, guid: 3ea772defc2a35e40991970e51f613c6, type: 3}
-  m_PrefabInstance: {fileID: 5406970638268630174}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 293e2934fc0d4655a5dd2168f5bfffaf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5406970638268630176 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6717867960650979626, guid: 3ea772defc2a35e40991970e51f613c6, type: 3}

@@ -145,7 +145,7 @@ public class CharacterMovementSystem : MonoBehaviour
             if (_isWallSliding != isWallSliding)
             {
                 animationAdapter.SetWallSlideState(isWallSliding);
-                //rigidbody.drag = isWallSliding ? 10f : 1f;
+                rigidbody.drag = isWallSliding ? 10f : 1f;
                 _isWallSliding = isWallSliding;
             }
 
@@ -156,11 +156,11 @@ public class CharacterMovementSystem : MonoBehaviour
     public void Attack()
     {
         if (!_isWallSliding)
-            animationAdapter.TriggerAttackState();
+            animationAdapter.TriggerAttackState(_faceDirection);
 
-        if (environmentTouchChecker.IsTouchingGround.Value)
+        /*if (environmentTouchChecker.IsTouchingGround.Value)
         {
-            rigidbody.velocity = new Vector2(6 * _faceDirection, 0);
-        }
+            rigidbody.velocity = new Vector2(5 * _faceDirection, 0);
+        }*/
     }
 }
